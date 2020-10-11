@@ -71,6 +71,31 @@ router.get(
 );
 
 router.get(
+  "/:slug/categories",
+  ash(async (req, res) => {
+    const { slug } = req.params;
+
+    const query = await db.query(
+      `
+    SELECT category.name
+    FROM category
+    JOIN article_category_map
+      ON category.id = article_category_map.category_id
+    JOIN article
+      ON article.id = article_category_map.article_id
+    WHERE article.slug = $1;
+    `,
+      [slug]
+    );
+
+    res.status(200).json({
+      status: 200,
+      categories: query.rows.map((c) => c.name),
+    });
+  })
+);
+
+router.get(
   "/:slug",
   ash(async (req, res) => {
     const { slug } = req.params;
@@ -84,13 +109,28 @@ router.get(
       [slug]
     );
 
+    const catQuery = await db.query(
+      `
+    SELECT category.name
+    FROM category
+    JOIN article_category_map
+      ON category.id = article_category_map.category_id
+    JOIN article
+      ON article.id = article_category_map.article_id
+    WHERE article.slug = $1;
+    `,
+      [slug]
+    );
+
     if (getQuery.rows.length > 0) {
       const post = getQuery.rows[0];
+      const categories = catQuery.rows.map((c) => c.name);
 
       const matterString = matter.stringify(post.content, {
         title: post.title,
         author: post.author,
         date: post.creation_date,
+        categories: categories,
         slug: post.slug,
       });
 
