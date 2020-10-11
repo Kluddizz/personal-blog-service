@@ -53,6 +53,24 @@ router.post(
 );
 
 router.get(
+  "/",
+  ash(async (req, res) => {
+    const query = await db.query(
+      `
+    SELECT *
+    FROM article;
+    `,
+      []
+    );
+
+    res.status(200).json({
+      status: 200,
+      posts: query.rows,
+    });
+  })
+);
+
+router.get(
   "/:slug",
   ash(async (req, res) => {
     const { slug } = req.params;

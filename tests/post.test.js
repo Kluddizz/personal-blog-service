@@ -59,8 +59,20 @@ test("Get post", async () => {
 
   const response = await request.json();
   await deletePost(post);
-  console.log(response.post);
 
   expect(response.status).toBe(200);
   expect(response.post).not.toBeUndefined();
+});
+
+test("Get post", async () => {
+  expect.assertions(2);
+
+  const request = await fetch(`http://localhost:5002/post`, {
+    method: "GET",
+  });
+
+  const response = await request.json();
+
+  expect(response.status).toBe(200);
+  expect(response.posts).not.toBeUndefined();
 });
