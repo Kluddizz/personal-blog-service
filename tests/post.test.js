@@ -76,3 +76,18 @@ test("Get post", async () => {
   expect(response.status).toBe(200);
   expect(response.posts).not.toBeUndefined();
 });
+
+test("Get categories", async () => {
+  expect.assertions(2);
+  insertPost(post);
+
+  const request = await fetch(
+    `http://localhost:5002/post/${post.slug}/categories`
+  );
+
+  const response = await request.json();
+  deletePost(post);
+
+  expect(response.status).toBe(200);
+  expect(response.categories).not.toBeUndefined();
+});
