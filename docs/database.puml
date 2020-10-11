@@ -1,0 +1,39 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/bschwarz/puml-themes/master/themes/cerulean/puml-theme-cerulean.puml
+
+entity Article {
+  +id
+  --
+  ~title
+  ~author
+  ~slug
+  ~creation_date
+  ~last_update
+}
+
+entity Category {
+  +id
+  --
+  ~name
+}
+
+entity Comment {
+  +id
+  --
+  ~author
+  ~creation_date
+  ~content
+  --
+  #article_id
+}
+
+entity "Article Category Map" as ACM {
+  #article_id
+  #category_id
+}
+
+Article --{ ACM
+Article --{ Comment
+Category --{ ACM
+
+@enduml

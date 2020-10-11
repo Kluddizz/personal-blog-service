@@ -52,6 +52,33 @@ router.post(
   })
 );
 
+router.post(
+  "/:slug/comment",
+  ash(async (req, res) => {
+    const { slug } = req.params;
+    const { author, content } = req.body;
+
+    await db.query(
+      `
+    INSERT INTO comment (author, content, article_id)
+    VALUES (
+      $1, $2, (
+        SELECT id
+        FROM article
+        WHERE slug = $3
+      )
+    )
+    `,
+      [author, content, slug]
+    );
+
+    res.status(200).json({
+      status: 200,
+      message: "Comment was posted successfully",
+    });
+  })
+);
+
 router.get(
   "/",
   ash(async (req, res) => {

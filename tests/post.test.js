@@ -9,6 +9,11 @@ const post = {
   content: "## Test title",
 };
 
+const comment = {
+  author: "Florian Hansen",
+  content: "Test comment",
+};
+
 const insertPost = async (post) => {
   const query = await db.query(
     `
@@ -32,62 +37,93 @@ const deletePost = async (post) => {
   );
 };
 
-test("Create new post", async () => {
-  expect.assertions(1);
-
-  const request = await fetch("http://localhost:5002/post", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(post),
+describe("Post", () => {
+  beforeAll(async () => {
+    await deletePost(post);
   });
 
-  const response = await request.json();
-  deletePost(post);
-
-  expect(response.status).toBe(200);
-});
-
-test("Get post", async () => {
-  expect.assertions(2);
-  await insertPost(post);
-
-  const request = await fetch(`http://localhost:5002/post/${post.slug}`, {
-    method: "GET",
+  afterAll(async () => {
+    await deletePost(post);
   });
 
-  const response = await request.json();
-  await deletePost(post);
+  test("Create new post", async () => {
+    expect.assertions(1);
 
-  expect(response.status).toBe(200);
-  expect(response.post).not.toBeUndefined();
-});
+    const request = await fetch("http://localhost:5002/post", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(post),
+    });
 
-test("Get post", async () => {
-  expect.assertions(2);
+    const response = await request.json();
+    await deletePost(post);
 
-  const request = await fetch(`http://localhost:5002/post`, {
-    method: "GET",
+    expect(response.status).toBe(200);
   });
 
-  const response = await request.json();
+  test("Get post", async () => {
+    expect.assertions(2);
+    await insertPost(post);
 
-  expect(response.status).toBe(200);
-  expect(response.posts).not.toBeUndefined();
-});
+    const request = await fetch(`http://localhost:5002/post/${post.slug}`, {
+      method: "GET",
+    });
 
-test("Get categories", async () => {
-  expect.assertions(2);
-  insertPost(post);
+    const response = await request.json();
+    await deletePost(post);
 
-  const request = await fetch(
-    `http://localhost:5002/post/${post.slug}/categories`
-  );
+    expect(response.status).toBe(200);
+    expect(response.post).not.toBeUndefined();
+  });
 
-  const response = await request.json();
-  deletePost(post);
+  test("Get post", async () => {
+    expect.assertions(2);
 
-  expect(response.status).toBe(200);
-  expect(response.categories).not.toBeUndefined();
+    const request = await fetch(`http://localhost:5002/post`, {
+      method: "GET",
+    });
+
+    const response = await request.json();
+
+    expect(response.status).toBe(200);
+    expect(response.posts).not.toBeUndefined();
+  });
+
+  test("Get categories", async () => {
+    expect.assertions(2);
+    await insertPost(post);
+
+    const request = await fetch(
+      `http://localhost:5002/post/${post.slug}/categories`
+    );
+
+    const response = await request.json();
+    await deletePost(post);
+
+    expect(response.status).toBe(200);
+    expect(response.categories).not.toBeUndefined();
+  });
+
+  test("Create comment to post", async () => {
+    expect.assertions(1);
+    await insertPost(post);
+
+    const request = await fetch(
+      `http://localhost:5002/post/${post.slug}/comment`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(comment),
+      }
+    );
+
+    const response = await request.json();
+    await deletePost(post);
+
+    expect(response.status).toBe(200);
+  });
 });
