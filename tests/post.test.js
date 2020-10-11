@@ -107,8 +107,8 @@ describe("Post", () => {
   });
 
   test("Create comment to post", async () => {
-    expect.assertions(1);
-    await insertPost(post);
+    expect.assertions(2);
+    const postId = await insertPost(post);
 
     const request = await fetch(
       `http://localhost:5002/post/${post.slug}/comment`,
@@ -122,9 +122,20 @@ describe("Post", () => {
     );
 
     const response = await request.json();
+
+    const checkQuery = await db.query(
+      `
+      SELECT *
+      FROM comment
+      WHERE article_id = $1;
+      `,
+      [postId]
+    );
+
     await deletePost(post);
 
     expect(response.status).toBe(200);
+    expect(checkQuery.rows.length).toBe(1);
   });
 
   test("Get all comments of a post", async () => {
