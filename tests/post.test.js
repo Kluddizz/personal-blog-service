@@ -126,4 +126,27 @@ describe("Post", () => {
 
     expect(response.status).toBe(200);
   });
+
+  test("Get all comments of a post", async () => {
+    expect.assertions(3);
+    await insertPost(post);
+
+    await fetch(`http://localhost:5002/post/${post.slug}/comment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(comment),
+    });
+
+    const request = await fetch(
+      `http://localhost:5002/post/${post.slug}/comments`
+    );
+    const response = await request.json();
+    await deletePost(post);
+
+    expect(response.status).toBe(200);
+    expect(response.comments).not.toBeUndefined();
+    expect(response.comments.length).toBeGreaterThan(0);
+  });
 });

@@ -98,6 +98,29 @@ router.get(
 );
 
 router.get(
+  "/:slug/comments",
+  ash(async (req, res) => {
+    const { slug } = req.params;
+
+    const query = await db.query(
+      `
+    SELECT comment.*
+    FROM comment
+    JOIN article
+      ON comment.article_id = article.id
+    WHERE article.slug = $1;
+    `,
+      [slug]
+    );
+
+    res.status(200).json({
+      status: 200,
+      comments: query.rows,
+    });
+  })
+);
+
+router.get(
   "/:slug/categories",
   ash(async (req, res) => {
     const { slug } = req.params;
