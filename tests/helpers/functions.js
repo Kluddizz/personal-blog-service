@@ -46,4 +46,4 @@ const deleteComment = async (id) => {
   );
 };
 
-module.exports = { insertPost, deletePost };
+module.exports = { insertPost, deletePost, insertComment, deleteComment };
