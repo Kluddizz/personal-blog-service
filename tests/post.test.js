@@ -1,29 +1,7 @@
 const fetch = require("node-fetch");
 const db = require("../db");
-const { post, comment } = require("./objects/dummies");
-
-const insertPost = async (post) => {
-  const query = await db.query(
-    `
-    INSERT INTO article (title, slug, author, content)
-    VALUES ($1, $2, $3, $4)
-    RETURNING id;
-    `,
-    [post.title, post.slug, post.author, post.content]
-  );
-
-  return query.rows[0]?.id;
-};
-
-const deletePost = async (post) => {
-  const query = await db.query(
-    `
-    DELETE FROM article
-    WHERE slug = $1;
-    `,
-    [post.slug]
-  );
-};
+const { post, comment } = require("./helpers/dummies");
+const { insertPost, deletePost } = require("./helpers/functions");
 
 describe("Post", () => {
   beforeAll(async () => {
