@@ -1,18 +1,6 @@
 const fetch = require("node-fetch");
 const db = require("../db");
-
-const post = {
-  title: "Test post",
-  slug: "test",
-  author: "Florian Hansen",
-  categories: ["IoT", "Software-Entwicklung"],
-  content: "## Test title",
-};
-
-const comment = {
-  author: "Florian Hansen",
-  content: "Test comment",
-};
+const { post, comment } = require("./objects/dummies");
 
 const insertPost = async (post) => {
   const query = await db.query(
