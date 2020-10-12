@@ -103,11 +103,9 @@ router.put(
       await db.query(
         `
         DELETE FROM article_category_map
-        USING article
-        WHERE article.id = article_category_map.article_id
-              AND article.slug = $1;
+        WHERE article_id = $1;
         `,
-        [slug]
+        [postId]
       );
 
       for (let cat of req.body.categories) {
