@@ -29,6 +29,37 @@ describe("Post", () => {
     expect(response.status).toBe(200);
   });
 
+  test("Update post", async () => {
+    expect.assertions(2);
+    const postId = await insertPost(post);
+    const updatedPost = { ...post, categories: ["IoT"] };
+
+    const request = await fetch(`http://localhost:5002/post/${post.slug}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedPost),
+    });
+
+    const response = await request.json();
+
+    const categoryQuery = await db.query(
+      `
+      SELECT *
+      FROM article_category_map
+      WHERE article_id = $1;
+      `,
+      [postId]
+    );
+
+    await deletePost(updatedPost);
+    await deletePost(post);
+
+    expect(response.status).toBe(200);
+    expect(categoryQuery.rows.length).toBe(1);
+  });
+
   test("Get post", async () => {
     expect.assertions(2);
     await insertPost(post);

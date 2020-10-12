@@ -87,11 +87,11 @@ router.put(
     const updateQuery = await db.query(
       `
       UPDATE article
-        SET content = $1,
-        SET author = $2,
-        SET title = $3,
-        SET slug = $4,
-        SET last_update = now()
+      SET content = $1,
+          author = $2,
+          title = $3,
+          slug = $4,
+          last_update = now()
       WHERE slug = $5
       RETURNING article.id;
       `,
@@ -103,9 +103,9 @@ router.put(
       await db.query(
         `
         DELETE FROM article_category_map
-        JOIN article
-          ON article.id = article_category_map.article_id
-        WHERE article.slug = $1;
+        USING article
+        WHERE article.id = article_category_map.article_id
+              AND article.slug = $1;
         `,
         [slug]
       );
