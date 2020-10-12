@@ -79,6 +79,56 @@ router.post(
   })
 );
 
+router.put(
+  "/:slug",
+  ash(async (req, res) => {
+    const { slug } = req.params;
+
+    const updateQuery = await db.query(
+      `
+      UPDATE article
+        SET content = $1,
+        SET author = $2,
+        SET title = $3,
+        SET slug = $4,
+        SET last_update = now()
+      WHERE slug = $5
+      RETURNING article.id;
+      `,
+      [req.body.content, req.body.author, req.body.title, req.body.slug, slug]
+    );
+
+    if (req.body.categories) {
+      const postId = updateQuery.rows[0]?.id;
+      await db.query(
+        `
+        DELETE FROM article_category_map
+        JOIN article
+          ON article.id = article_category_map.article_id
+        WHERE article.slug = $1;
+        `,
+        [slug]
+      );
+
+      for (let cat of req.body.categories) {
+        await db.query(
+          `
+          INSERT
+          INTO article_category_map (article_id, category_id)
+          VALUES ($1, (SELECT id FROM category WHERE name = $2));
+          `,
+          [postId, cat]
+        );
+      }
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: "Updated article successfully",
+    });
+  })
+);
+
 router.get(
   "/",
   ash(async (req, res) => {
