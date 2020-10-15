@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const express = require("express");
 const cors = require("cors");
-const log = require("./log");
+const log = require("@kluddizz/log");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -17,7 +17,7 @@ app.use(cors());
 
 // The following code is used to load all routes inside the routes folder
 // automatically. Every route is represented by a 'express.Router' instance.
-const routesPath = path.join(__dirname, "routes");
+const routesPath = path.join(process.cwd(), "routes");
 
 fs.readdirSync(routesPath).forEach((filename) => {
   const routePath = `./routes/${filename}`;
@@ -41,5 +41,5 @@ fs.readdirSync(routesPath).forEach((filename) => {
 
 // Start the backend server.
 app.listen(port, () => {
-  console.log(`webserver running on port ${port}`);
+  log(`running on port ${port}`);
 });

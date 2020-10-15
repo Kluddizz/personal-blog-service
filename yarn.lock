@@ -458,6 +458,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@kluddizz/log@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@kluddizz/log/-/log-1.0.0.tgz#214d85ad48d9e05deecc8021f4e5fd896cad92d3"
+  integrity sha512-GWnnpHlCpck6v+DOxC6i5k0aJAI/OoIA04i/gHBqstzyzDioYVF83a6IfEjcMFrTI2cdJiwzy15UsWx+GKy6iQ==
+
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
