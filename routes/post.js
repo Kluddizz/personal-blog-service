@@ -1,12 +1,20 @@
+const fs = require("fs");
 const db = require("../db");
 const path = require("path");
 const ash = require("../wrap-async");
 const matter = require("gray-matter");
 const express = require("express");
+const exprjwt = require("express-jwt");
 const router = express.Router();
+
+const verifyKeyFile = path.join(process.cwd(), "verify.key");
+const verifyKey = fs.readFileSync(verifyKeyFile);
+
+const jwt = exprjwt({ secret: verifyKey, algorithms: ["RS256"] });
 
 router.post(
   "/",
+  jwt,
   ash(async (req, res) => {
     const { title, slug, author, categories, content } = req.body;
 
@@ -54,6 +62,7 @@ router.post(
 
 router.put(
   "/:slug",
+  jwt,
   ash(async (req, res) => {
     const { slug } = req.params;
 

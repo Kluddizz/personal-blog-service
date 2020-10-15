@@ -3,6 +3,7 @@ node_modules/
 
 # configuration files
 postgres.json
+loginCredentials.json
 
 # keys
 *.key

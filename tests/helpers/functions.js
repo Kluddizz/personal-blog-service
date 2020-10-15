@@ -1,4 +1,27 @@
+const fetch = require("node-fetch");
+const path = require("path");
 const db = require("../../db");
+
+const LOGIN_SERVICE = "http://localhost:5003";
+
+const login = async () => {
+  const credentialFile = path.join(
+    process.cwd(),
+    "tests/helpers/loginCredentials.json"
+  );
+  const credentials = require(credentialFile);
+
+  const request = await fetch(`${LOGIN_SERVICE}/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(credentials),
+  });
+
+  const response = await request.json();
+  return response.token;
+};
 
 const insertPost = async (post) => {
   const query = await db.query(
@@ -46,4 +69,10 @@ const deleteComment = async (id) => {
   );
 };
 
-module.exports = { insertPost, deletePost, insertComment, deleteComment };
+module.exports = {
+  login,
+  insertPost,
+  deletePost,
+  insertComment,
+  deleteComment,
+};

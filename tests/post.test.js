@@ -1,10 +1,13 @@
 const fetch = require("node-fetch");
 const db = require("../db");
 const { post, comment } = require("./helpers/dummies");
-const { insertPost, deletePost } = require("./helpers/functions");
+const { insertPost, deletePost, login } = require("./helpers/functions");
 
 describe("Post", () => {
+  let token;
+
   beforeAll(async () => {
+    token = await login();
     await deletePost(post);
   });
 
@@ -19,6 +22,7 @@ describe("Post", () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(post),
     });
@@ -38,6 +42,7 @@ describe("Post", () => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(updatedPost),
     });
@@ -75,7 +80,7 @@ describe("Post", () => {
     expect(response.post).not.toBeUndefined();
   });
 
-  test("Get post", async () => {
+  test("Get all posts", async () => {
     expect.assertions(2);
 
     const request = await fetch(`http://localhost:5002/post`, {

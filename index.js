@@ -3,18 +3,13 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const express = require("express");
-const exprjwt = require("express-jwt");
 const cors = require("cors");
 const log = require("@kluddizz/log");
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-const verifyKeyFile = path.join(process.cwd(), "verify.key");
-const verifyKey = fs.readFileSync(verifyKeyFile);
-
 // Install middleware
-app.use(exprjwt({ secret: verifyKey, algorithms: ["RS256"] }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(helmet());
@@ -51,7 +46,7 @@ fs.readdirSync(routesPath).forEach((filename) => {
     const route = require(routePath);
 
     route.use((err, req, res, next) => {
-      log(err.message);
+      log(err.message, "error");
 
       res.status(400).json({
         status: 400,
