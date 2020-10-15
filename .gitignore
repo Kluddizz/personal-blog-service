@@ -1,2 +1,9 @@
+# dependencies
 node_modules/
+
+# configuration files
 postgres.json
+
+# keys
+*.key
+*.pub
